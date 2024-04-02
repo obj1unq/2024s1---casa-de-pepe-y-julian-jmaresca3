@@ -1,0 +1,47 @@
+import casa.*
+
+test "Se rompe algo en la casa y no deberia estar en orden" {
+	casaDePepeYJulian.romperAlgoDe(1000)
+	assert.equals(1000, casaDePepeYJulian.montoReparaciones())
+	assert.equals(true, casaDePepeYJulian.suficientesViveres())
+	assert.equals(true, casaDePepeYJulian.necesitaReparaciones())
+	assert.equals(false, casaDePepeYJulian.estaEnOrden())
+}
+
+test "Al depositar en una cuenta con gastos deberia descontarse el gasto" {
+	cuentaConGastos.costoPorOperacion(20)
+	cuentaConGastos.depositar(1000)
+	assert.equals(980, cuentaConGastos.saldo())
+}
+
+test "Cuenta combinada" {
+	cuentaCombinada.cuentaPrimaria(cuentaConGastos)
+	cuentaConGastos.costoPorOperacion(50)
+	cuentaCombinada.cuentaSecundaria(cuentaCorriente)
+	cuentaCorriente.depositar(500)
+	cuentaCombinada.depositar(100)
+	cuentaCombinada.extraer(200)
+	assert.equals(50, cuentaConGastos.saldo())
+	assert.equals(300, cuentaCorriente.saldo())
+	assert.equals(350, cuentaCombinada.saldo())
+}
+
+test "Generar un gasto en la casa verlo reflejado en la cuenta" {
+	casaDePepeYJulian.cuentaBancaria(cuentaCorriente)
+	casaDePepeYJulian.depositarEnCuenta(300)
+	casaDePepeYJulian.gastar(210)
+	assert.equals(90, casaDePepeYJulian.saldoEnCuenta())
+}
+
+test "Caso de prueba final" {
+	casaDePepeYJulian.viveres(50)
+	casaDePepeYJulian.romperAlgoDe(100)
+	casaDePepeYJulian.cuentaBancaria(cuentaCorriente)
+	casaDePepeYJulian.depositarEnCuenta(1000)
+	casaDePepeYJulian.estrategia(full)
+	assert.equals(false, casaDePepeYJulian.estaEnOrden())
+	casaDePepeYJulian.realizarMantenimiento()
+	assert.equals(90, casaDePepeYJulian.viveres())
+	assert.equals(100, casaDePepeYJulian.montoReparaciones())
+	assert.equals(800, casaDePepeYJulian.saldoEnCuenta())	
+}
