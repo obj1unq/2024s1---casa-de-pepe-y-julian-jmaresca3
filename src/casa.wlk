@@ -144,3 +144,10 @@ object full{
 	
 	method hayDineroDisponibleEn(casa) = return casa.saldoEnCuenta() > casa.montoReparaciones() + 1000
 }
+
+/*
+ * Respondiendo a la ultima pregunta, se podria implementar sin problemas otra casa,
+ * los mensajes que deberia poder entender para que pueda utilizar las estrategias 
+ * son los relacionados con los viveres, el mensaje que le da la orden de gastar,
+ * saldo en cuenta y por ultimo monto de reparacion y si esta en orden o no
+ */
