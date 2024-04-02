@@ -1,24 +1,18 @@
 object casaDePepeYJulian{
-	var viveres = 50
+	var property viveres = 50
 	var montoReparaciones = 0
 	var reparaciones = false
+	var cuentaBancaria = cuentaCorriente
+	var estrategia
 	
 	method romperAlgoDe(unMonto){
 		montoReparaciones += unMonto
 		reparaciones = true
 	}
 	
-	method viveres(_viveres){
-		viveres = _viveres
-	}
+	method montoReparaciones() = return montoReparaciones
 	
-	method montoReparaciones(){
-		return montoReparaciones
-	}
-	
-	method suficientesViveres(){
-		return viveres>40
-	}
+	method suficientesViveres() = return self.viveres()>40
 	
 	method reparaciones(estado){
 		reparaciones = estado
@@ -31,6 +25,23 @@ object casaDePepeYJulian{
 	method estaEnOrden(){
 		return self.suficientesViveres() and (not self.necesitaReparaciones())
 	}
+	
+	method cuentaBancaria(_cuentaBancaria){
+		cuentaBancaria = _cuentaBancaria
+	}
+	
+	method gastar(importe){
+		cuentaBancaria.extraer(importe)
+	}
+	method depositarEnCuenta(importe) {
+		cuentaBancaria.depositar(importe) 
+	}
+	method saldoEnCuenta() = return cuentaBancaria.saldo()
+	
+	method estrategia(_estrategia){
+		estrategia = _estrategia
+	}
+	method realizarMantenimiento() = estrategia.realizarMantenimiento(self)	
 }
 
 //////CUENTAS BANCARIAS//////
@@ -44,9 +55,7 @@ object cuentaCorriente{
 	method depositar(importe){
 		saldo += importe
 	}
-	method saldo(){
-		return saldo
-	}
+	method saldo() = return saldo
 }
 
 object cuentaConGastos{
@@ -61,11 +70,56 @@ object cuentaConGastos{
 		saldo += (importe - costoPorOperacion)
 	}
 	
-	method saldo(){
-		return saldo
-	}
+	method saldo() = return saldo
 	
 	method costoPorOperacion(_costoPorOperacion){
 		costoPorOperacion = _costoPorOperacion
 	}
+}
+
+object cuentaCombinada{
+	var property cuentaPrimaria
+	var property cuentaSecundaria
+	
+	method extraer(importe){
+		if (cuentaPrimaria.saldo()>importe){
+			cuentaPrimaria.extraer(importe)
+		} else {
+			cuentaSecundaria.extraer(importe)
+		}
+	}
+	method depositar(importe) = cuentaPrimaria.depositar(importe)
+	
+	method saldo() = return cuentaPrimaria.saldo() + cuentaSecundaria.saldo()
+}
+
+//////ESTRATEGIAS DE AHORRO//////
+
+object minimoEIndispensable{
+	var property calidad = 1
+	
+	method realizarMantenimiento(casa){
+		if(not casa.suficientesViveres()){
+			casa.gastar(self.gastoDeComprarViveres(casa))
+		}
+	}
+	method gastoDeComprarViveres(casa) = return self.porcentajeAComprar(casa)*self.calidad()
+	method porcentajeAComprar(casa) = return 40-casa.viveres()
+}
+
+object full{
+	const calidad = 5
+	
+	method realizarMantenimiento(casa){
+		if(casa.estaEnOrden()){
+			casa.gastar(self.gastoDeComprarViveresRestantes(casa))
+		}else{
+			casa.gastar(self.comprarViveres(40, casa))
+		}
+	}
+	method comprarViveres(porcentaje, casa){
+		return porcentaje*calidad
+	}
+	method gastoDeComprarViveresRestantes(casa) = return self.porcentajeAComprar(casa)*calidad
+	method porcentajeAComprar(casa) = return 100-casa.viveres()
 }

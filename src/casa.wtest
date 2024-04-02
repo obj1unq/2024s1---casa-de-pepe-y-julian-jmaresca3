@@ -13,3 +13,22 @@ test "Al depositar en una cuenta con gastos deberia descontarse el gasto" {
 	cuentaConGastos.depositar(1000)
 	assert.equals(980, cuentaConGastos.saldo())
 }
+
+test "Cuenta combinada" {
+	cuentaCombinada.cuentaPrimaria(cuentaConGastos)
+	cuentaConGastos.costoPorOperacion(50)
+	cuentaCombinada.cuentaSecundaria(cuentaCorriente)
+	cuentaCorriente.depositar(500)
+	cuentaCombinada.depositar(100)
+	cuentaCombinada.extraer(200)
+	assert.equals(50, cuentaConGastos.saldo())
+	assert.equals(300, cuentaCorriente.saldo())
+	assert.equals(350, cuentaCombinada.saldo())
+}
+
+test "Generar un gasto en la casa verlo reflejado en la cuenta" {
+	casaDePepeYJulian.cuentaBancaria(cuentaCorriente)
+	casaDePepeYJulian.depositarEnCuenta(300)
+	casaDePepeYJulian.gastar(210)
+	assert.equals(90, casaDePepeYJulian.saldoEnCuenta())
+}
