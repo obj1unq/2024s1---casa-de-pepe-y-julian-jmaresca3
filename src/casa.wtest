@@ -1,0 +1,15 @@
+import casa.*
+
+test "Se rompe algo en la casa y no deberia estar en orden" {
+	casaDePepeYJulian.romperAlgoDe(1000)
+	assert.equals(1000, casaDePepeYJulian.montoReparaciones())
+	assert.equals(true, casaDePepeYJulian.suficientesViveres())
+	assert.equals(true, casaDePepeYJulian.necesitaReparaciones())
+	assert.equals(false, casaDePepeYJulian.estaEnOrden())
+}
+
+test "Al depositar en una cuenta con gastos deberia descontarse el gasto" {
+	cuentaConGastos.costoPorOperacion(20)
+	cuentaConGastos.depositar(1000)
+	assert.equals(980, cuentaConGastos.saldo())
+}
