@@ -3,7 +3,7 @@ object casaDePepeYJulian{
 	var montoReparaciones = 0
 	var reparaciones = false
 	var cuentaBancaria = cuentaCorriente
-	var estrategia
+	var estrategia = minimoEIndispensable
 	
 	method romperAlgoDe(unMonto){
 		montoReparaciones += unMonto
@@ -42,6 +42,11 @@ object casaDePepeYJulian{
 		estrategia = _estrategia
 	}
 	method realizarMantenimiento() = estrategia.realizarMantenimiento(self)	
+	
+	method hacerReparaciones(){
+		cuentaBancaria.extraer(montoReparaciones)
+		self.reparaciones(false)
+	}
 }
 
 //////CUENTAS BANCARIAS//////
@@ -100,10 +105,15 @@ object minimoEIndispensable{
 	
 	method realizarMantenimiento(casa){
 		if(not casa.suficientesViveres()){
-			casa.gastar(self.gastoDeComprarViveres(casa))
+			self.comprarViveres(casa, self.porcentajeAComprar(casa))
 		}
 	}
-	method gastoDeComprarViveres(casa) = return self.porcentajeAComprar(casa)*self.calidad()
+	
+	method comprarViveres(casa, porcentaje){
+		casa.viveres(casa.viveres()+porcentaje)
+		casa.gastar(porcentaje*calidad)
+	}
+	
 	method porcentajeAComprar(casa) = return 40-casa.viveres()
 }
 
@@ -112,14 +122,25 @@ object full{
 	
 	method realizarMantenimiento(casa){
 		if(casa.estaEnOrden()){
-			casa.gastar(self.gastoDeComprarViveresRestantes(casa))
+			self.comprarViveres(casa, self.porcentajeAComprar(casa))
 		}else{
-			casa.gastar(self.comprarViveres(40, casa))
+			self.comprarViveres(casa, 40)
+		}
+		self.chequearReparaciones(casa)
+	}
+	
+	method comprarViveres(casa, porcentaje){
+		casa.viveres(casa.viveres()+porcentaje)
+		casa.gastar(porcentaje*calidad)
+	}
+
+	method porcentajeAComprar(casa) = return 100-casa.viveres()
+	
+	method chequearReparaciones(casa){
+		if(casa.necesitaReparaciones() and self.hayDineroDisponibleEn(casa)){
+			casa.hacerReparaciones()
 		}
 	}
-	method comprarViveres(porcentaje, casa){
-		return porcentaje*calidad
-	}
-	method gastoDeComprarViveresRestantes(casa) = return self.porcentajeAComprar(casa)*calidad
-	method porcentajeAComprar(casa) = return 100-casa.viveres()
+	
+	method hayDineroDisponibleEn(casa) = return casa.saldoEnCuenta() > casa.montoReparaciones() + 1000
 }

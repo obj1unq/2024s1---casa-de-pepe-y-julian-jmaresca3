@@ -32,3 +32,16 @@ test "Generar un gasto en la casa verlo reflejado en la cuenta" {
 	casaDePepeYJulian.gastar(210)
 	assert.equals(90, casaDePepeYJulian.saldoEnCuenta())
 }
+
+test "Caso de prueba final" {
+	casaDePepeYJulian.viveres(50)
+	casaDePepeYJulian.romperAlgoDe(100)
+	casaDePepeYJulian.cuentaBancaria(cuentaCorriente)
+	casaDePepeYJulian.depositarEnCuenta(1000)
+	casaDePepeYJulian.estrategia(full)
+	assert.equals(false, casaDePepeYJulian.estaEnOrden())
+	casaDePepeYJulian.realizarMantenimiento()
+	assert.equals(90, casaDePepeYJulian.viveres())
+	assert.equals(100, casaDePepeYJulian.montoReparaciones())
+	assert.equals(800, casaDePepeYJulian.saldoEnCuenta())	
+}
